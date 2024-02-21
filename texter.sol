@@ -3,18 +3,30 @@
 pragma solidity ^0.8.8;
 
 contract chatext {
-    // a =(hex)> 0x61 + 00000000000000000000000000000000000000000000000000000000000000
-    string[] public asd = ["2", "1"];
+
     struct Post {
         string Title;
         string Body; 
     }
-    mapping(address => mapping(bytes32 => string)) public texters;
-    mapping(address => Post[]) public posts;
+    struct Reply {
+        address replyAuthor;
+        string Body;
+    }
 
-    function saveText (bytes32 _title, string memory _text) public {
-        texters[msg.sender][_title] = _text;
-        posts[msg.sender].push(Post("Some Title",_text));
-        asd.push(_text);
+    Post[] public posts; // easy way to get latest posts => highest index | map uint => [post+author][]; need posters addresses to be known
+
+    mapping(address => uint[]) public postsId;
+    mapping(uint => Reply[]) public replies;
+    // mapping(uint => mapping(address => Post[])) public replies; // know replyAuthor before call
+
+    function saveText (string memory _text) public {
+        posts.push(Post("Some Title",_text));
+        postsId[msg.sender].push(posts.length);
+    }
+
+    function reply (uint _postId, string memory _reply) public {
+        replies[_postId].push(Reply(msg.sender, _reply));
+        // replies[_postId][msg.sender].push(Post("Some Reply", _reply));
+        // sort by block
     }
 }
