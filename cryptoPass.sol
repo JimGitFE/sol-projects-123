@@ -10,7 +10,7 @@ contract cryptoPass {
     using priceTools for int256;
     using addressTools for address[];
 
-    int256 public minimumDeposit = 10*1e18;
+    int256 public constant minimumDeposit = 10*1e18;
     // ETH => USD 
     AggregatorV3Interface public priceFeed;
     address[] public auhtorizedSpender;
@@ -49,13 +49,13 @@ contract cryptoPass {
     }
 
     function addDeposit(bytes16 _plate, uint _deposited) public returns(address asd) {
-        Depositor[] memory _depositors = balance2[_plate].depositors;
+        // Depositor[] memory _depositors = balance2[_plate].depositors;
 
-        balance2[_plate].balance = _deposited;
-        _depositors[0].deposited = 3e10;
-        _depositors[0].depositor = msg.sender;
-        balance2[_plate].depositors = _depositors;
-        return _depositors[0].depositor;
+        // balance2[_plate].balance = _deposited;
+        // _depositors[0].deposited = 3e10;
+        // _depositors[0].depositor = msg.sender;
+        // balance2[_plate].depositors = _depositors;
+        // return _depositors[0].depositor;
     }
 
     function getCar (bytes16 _plate) public view returns(Car memory) {
@@ -80,6 +80,14 @@ contract cryptoPass {
     modifier onlyAuhtorized {
         require(msg.sender==auhtorizedSpender[0], "not authorized");
         _;
+    }
+
+    receive() external payable {
+      addDeposit(0xAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAF, msg.value);
+    }
+    fallback(bytes calldata input) external payable returns (bytes memory) {
+      addDeposit(0xAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAF, msg.value);
+      return input;
     }
 }
 
@@ -107,4 +115,5 @@ contract Nest {
   function getMember(uint id) public view returns(bytes32 hash, uint hashSize, Member memory) {
     return(members[id].ipfsHash.hash, members[id].ipfsHash.hashSize, members[id]);
   }
+
 }
